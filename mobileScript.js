@@ -13,6 +13,7 @@ let ravenInterval = 500;
 let lastTime = 0;
 let score = 0;
 let gameOver = false;
+let numberOfEnemies = 6;
 class Raven {
   constructor() {
     this.spriteWidth = 271;
@@ -26,7 +27,7 @@ class Raven {
     this.directionY = Math.random() * 5 - 2.5;
     this.markedForDeletion = false;
     this.image = new Image();
-    this.image.src = 'raven.png';
+    this.image.src = 'ravenMobile.png';
     this.frame = 0;
     this.maxFrame = 4;
     this.timeSinceFlap = 0;
@@ -44,10 +45,11 @@ class Raven {
       `,` +
       this.randomColors[2] +
       `)`;
+    this.speed = Math.floor(Math.random() * 2.5 + 1);
   }
   update(deltaTime) {
-    this.x -= this.directionX;
-    this.y += this.directionY;
+    this.x -= this.directionX * this.speed;
+    this.y += this.directionY * this.speed;
     if (this.y < 0 || this.y > canvas.height - this.height) {
       this.directionY = this.directionY * -1;
     }
@@ -63,10 +65,10 @@ class Raven {
   draw() {
     collisionCtx.fillStyle = this.color;
     collisionCtx.fillRect(
-      this.x + 5,
-      this.y + 5,
-      this.width + 2.5,
-      this.height + 2.5
+      this.x + 15,
+      this.y + 15,
+      this.width + 7.5,
+      this.height + 7.5
     );
     ctx.drawImage(
       this.image,
@@ -104,7 +106,7 @@ let explosions = [];
 class Explosions {
   constructor(x, y, size) {
     this.image = new Image();
-    this.image.src = `boom.png`;
+    this.image.src = `boomMobile.png`;
     this.spriteWidth = 200;
     this.spriteHeight = 179;
     this.size = size;
@@ -112,9 +114,9 @@ class Explosions {
     this.y = y;
     this.frame = 0;
     this.sound = new Audio();
-    this.sound.src = `boom.wav`;
+    this.sound.src = `boomMobile.wav`;
     this.timeSinceLastFrame = 0;
-    this.frameInterval = 100;
+    this.frameInterval = 8;
     this.markedForDeletion = false;
   }
   update(deltaTime) {
@@ -152,27 +154,23 @@ window.addEventListener(`click`, function (e) {
     ) {
       //collision detected
       object.markedForDeletion = true;
-      if (object.width < 100) {
+      if (object.width < 150) {
         score++;
       }
       score++;
       explosions.push(new Explosions(object.x, object.y, object.width));
     }
+    if (score > 50) this.speed++;
   });
 });
-function enemyLimit() {
-  if (ravens.length > 5) {
-    ravenInterval = NaN;
-  } else {
-    ravenInterval = 500;
-  }
-}
+
 function animate(timestamp) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   collisionCtx.clearRect(0, 0, canvas.width, canvas.height);
   let deltaTime = timestamp - lastTime;
   lastTime = timestamp;
   timeToNextRaven += deltaTime;
+
   if (timeToNextRaven > ravenInterval) {
     ravens.push(new Raven());
     timeToNextRaven = 0;
@@ -180,6 +178,7 @@ function animate(timestamp) {
       return a.width - b.width;
     });
   }
+
   drawScore();
   [...ravens, ...explosions].forEach((object) => object.update(deltaTime));
   [...ravens, ...explosions].forEach((object) => object.draw());
