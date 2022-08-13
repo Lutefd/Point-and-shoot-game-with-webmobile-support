@@ -84,11 +84,6 @@ class Raven {
   }
 }
 
-function drawScore() {
-  ctx.font = `2.5rem impact`;
-  ctx.fillStyle = `white`;
-  ctx.fillText(`Score:` + score, 0, 35);
-}
 function drawGameOver() {
   ctx.font = `2.5rem impact`;
   ctx.textAlign = `center`;
@@ -100,8 +95,23 @@ function drawGameOver() {
     canvas.height * 0.5 + 50
   );
   ctx.fillText(score, canvas.width * 0.5, canvas.height * 0.5 + 125);
+  ctx.fillText(
+    'Tente novamente',
+    canvas.width * 0.5,
+    canvas.height * 0.5 + 175
+  );
 }
-
+function restartGame() {
+  ravens = [];
+  score = 0;
+  gameOver = false;
+  animate(0);
+}
+function drawScore() {
+  ctx.font = `2.5rem impact`;
+  ctx.fillStyle = `white`;
+  ctx.fillText(`Score:` + score, 0, 35);
+}
 let explosions = [];
 class Explosions {
   constructor(x, y, size) {
@@ -161,6 +171,7 @@ window.addEventListener(`click`, function (e) {
       explosions.push(new Explosions(object.x, object.y, object.width));
     }
     if (score > 50) this.speed++;
+    if (gameOver) restartGame();
   });
 });
 
