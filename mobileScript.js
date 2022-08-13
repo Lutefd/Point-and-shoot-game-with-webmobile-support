@@ -45,11 +45,13 @@ class Raven {
       `,` +
       this.randomColors[2] +
       `)`;
-    this.speed = Math.floor(Math.random() * 1.6 + 1.2);
+    this.speed = Math.floor(Math.random() * 1.2 + 1);
+    this.maxSpeed = 1.8;
   }
   update(deltaTime) {
     this.x -= this.directionX * this.speed;
     this.y += this.directionY * this.speed;
+    if (this.x > this.directionX * this.maxSpeed) this.x -= this.directionX;
     if (this.y < 0 || this.y > canvas.height - this.height) {
       this.directionY = this.directionY * -1;
     }
