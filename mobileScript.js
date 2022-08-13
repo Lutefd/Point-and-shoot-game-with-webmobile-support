@@ -45,7 +45,7 @@ class Raven {
       `,` +
       this.randomColors[2] +
       `)`;
-    this.speed = Math.floor(Math.random() * 2.5 + 1);
+    this.speed = Math.floor(Math.random() * 2 + 1.2);
   }
   update(deltaTime) {
     this.x -= this.directionX * this.speed;
